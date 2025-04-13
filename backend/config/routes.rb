@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   # API routes
   get "health_checks", to: "health_checks#index"
 
-  resources :categories, param: :name, only: [] do
+  resources :categories, param: :name, only: [:index] do
     resources :metrics, param: :metric_name, only: %i[index update]
   end
 end
