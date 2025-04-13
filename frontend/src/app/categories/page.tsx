@@ -15,7 +15,7 @@ export default function CategoriesPage() {
         const data = await getCategories();
         setCategories(data);
       } catch (err) {
-        setError('カテゴリの取得に失敗しました');
+        setError('Failed to fetch categories');
         console.error(err);
       } finally {
         setLoading(false);
@@ -26,7 +26,7 @@ export default function CategoriesPage() {
   }, []);
 
   if (loading) {
-    return <div className="p-8 text-center">読み込み中...</div>;
+    return <div className="p-8 text-center">Loading...</div>;
   }
 
   if (error) {
@@ -35,10 +35,10 @@ export default function CategoriesPage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">カテゴリ一覧</h1>
+      <h1 className="text-2xl font-bold mb-6">Categories</h1>
       
       {categories.length === 0 ? (
-        <p>カテゴリがありません</p>
+        <p>No categories available</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map((category) => (
@@ -59,7 +59,7 @@ export default function CategoriesPage() {
           href="/" 
           className="text-blue-500 hover:underline"
         >
-          ホームに戻る
+          Back to Home
         </Link>
       </div>
     </div>
