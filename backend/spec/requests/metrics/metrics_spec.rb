@@ -10,7 +10,7 @@ RSpec.describe "MetricsController", type: :request do
     end
 
     before do
-      create(:metric_value, metric: metric_rds, value: 123.45, recorded_at: 2.days.ago)
+      create(:metric_value, metric: metric_rds, value: 1234.56, recorded_at: 2.days.ago)
       create(:metric_value, metric: metric_rds, value: 150.0, recorded_at: 1.day.ago)
     end
 
@@ -28,10 +28,9 @@ RSpec.describe "MetricsController", type: :request do
         rds_metric = json_response["metrics"].find { |m| m["name"] == "rds" }
         expect(rds_metric).to be_present
         expect(rds_metric["label"]).to eq(metric_rds.label)
-        expect(rds_metric["unit"]).to eq("$")
-        expect(rds_metric["prefix_unit"]).to be true
         expect(rds_metric["values"].length).to eq(2)
-        expect(rds_metric["values"].map { |v| v["value"] }).to contain_exactly("123.45", "150.0")
+        expect(rds_metric["values"].map { |v| v["value"] }).to contain_exactly("1234.56", "150.0")
+        expect(rds_metric["values"].map { |v| v["value_with_unit"] }).to contain_exactly("$1,234.56", "$150.0")
       end
     end
 
@@ -47,7 +46,7 @@ RSpec.describe "MetricsController", type: :request do
     context "with valid parameters" do
       let(:category_name) { "aws" }
       let(:metric_name) { "rds" }
-      let(:value) { "$123.45" }
+      let(:value) { "$1234.56" }
 
       before do
         put "/categories/#{category_name}/metrics/#{metric_name}", params: { value: value }
@@ -58,8 +57,8 @@ RSpec.describe "MetricsController", type: :request do
         json_response = response.parsed_body
         expect(json_response["category"]["name"]).to eq(category_name)
         expect(json_response["category"]["metric"]["name"]).to eq(metric_name)
-        expect(json_response["category"]["metric"]["unit"]).to eq("$")
-        expect(json_response["category"]["metric"]["value"]["value"]).to eq("123.45")
+        expect(json_response["category"]["metric"]["value"]["value_with_unit"]).to eq("$1,234.56")
+        expect(json_response["category"]["metric"]["value"]["value"]).to eq("1234.56")
 
         category = Category.find_by(name: category_name)
         expect(category).to be_present
@@ -67,7 +66,7 @@ RSpec.describe "MetricsController", type: :request do
         expect(category.metrics.count).to eq(1)
         expect(category.metrics.first.name).to eq(metric_name)
         expect(category.metrics.first.unit).to eq("$")
-        expect(category.metrics.first.metric_values.first.value).to eq(123.45)
+        expect(category.metrics.first.metric_values.first.value).to eq(1234.56)
       end
     end
   end

@@ -10,11 +10,10 @@ class MetricsController < ApplicationController
         {
           name: metric.name,
           label: metric.label,
-          unit: metric.unit,
-          prefix_unit: metric.prefix_unit,
           values: metric.metric_values.map do |value|
             {
               value: value.value,
+              value_with_unit: value.value_with_unit(prefix: metric.prefix_unit),
               recorded_at: value.recorded_at
             }
           end
@@ -37,10 +36,9 @@ class MetricsController < ApplicationController
         metric: {
           name: metric.name,
           label: metric.label,
-          unit: metric.unit,
-          prefix_unit: metric.prefix_unit,
           value: {
             value: metric.metric_values.last.value,
+            value_with_unit: metric.metric_values.last.value_with_unit(prefix: metric.prefix_unit),
             recorded_at: metric.metric_values.last.recorded_at
           }
         }
