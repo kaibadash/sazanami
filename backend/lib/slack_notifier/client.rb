@@ -7,20 +7,19 @@ require "json"
 module SlackNotifier
   class Client
     class << self
-      def notify_metric_change(metric, old_value, new_value, change_percent)
+      def notify_metric_change(metric, old_value, new_value, z_score)
         return if webhook_url.blank?
-        return unless change_percent.abs >= threshold_percent
 
-        direction = change_percent.positive? ? "increase" : "decrease"
+        direction = z_score.positive? ? "increase" : "decrease"
         message = {
-          text: ":rotating_light: Metric Rapid Change Notification :rotating_light:",
+          text: ":rotating_light: Metric Anomaly Detection :rotating_light:",
           icon_emoji: ":alert:",
           blocks: [
             {
               type: "section",
               text: {
                 type: "mrkdwn",
-                text: "*Rapid #{direction} in metric value detected*"
+                text: "*Statistical anomaly in metric value detected*"
               }
             },
             {
@@ -36,15 +35,19 @@ module SlackNotifier
                 },
                 {
                   type: "mrkdwn",
-                  text: "*Previous value:*\n#{old_value.value_with_unit(metric.prefix_unit)}"
+                  text: "*Previous value:*\n#{format_value(old_value, metric)}"
                 },
                 {
                   type: "mrkdwn",
-                  text: "*Current value:*\n#{new_value.value_with_unit(metric.prefix_unit)}"
+                  text: "*Current value:*\n#{format_value(new_value, metric)}"
                 },
                 {
                   type: "mrkdwn",
-                  text: "*Change rate:*\n#{change_percent.round(2)}%"
+                  text: "*Change rate:*\n#{change_percent.round(2)}% (#{direction})"
+                },
+                {
+                  type: "mrkdwn",
+                  text: "*Anomaly score:*\n#{z_score&.round(2)} σ"
                 }
               ]
             }
@@ -72,8 +75,13 @@ module SlackNotifier
         ENV.fetch("SLACK_WEBHOOK_URL", nil)
       end
 
-      def threshold_percent
-        ENV.fetch("METRIC_CHANGE_THRESHOLD", 10).to_f
+      def format_value(value, metric)
+        if value.is_a?(MetricValue)
+          value.value_with_unit(metric.prefix_unit)
+        else
+          formatted_value = value.to_f.to_fs(:delimited)
+          metric.prefix_unit ? "#{metric.unit}#{formatted_value}" : "#{formatted_value}#{metric.unit}"
+        end
       end
     end
   end
