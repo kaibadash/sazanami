@@ -1,0 +1,22 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# プロジェクト構造
+
+このプロジェクトは以下の構造になっています：
+
+## バックエンド (Ruby on Rails API)
+
+- `backend/app`: バックエンドのメインコード
+- `backend/config`: Railsの設定ファイル
+- `backend/db`: データベースマイグレーションと設定
+- `backend/lib`: ライブラリコード
+- `backend/spec`: テストコード
+
+## フロントエンド (Next.js)
+
+- `frontend/src/app`: Next.jsのアプリケーションコード
+- `frontend/src/lib`: フロントエンドのユーティリティ
+- `frontend/public`: 静的ファイル 

@@ -1,0 +1,12 @@
+ja:
+  activerecord:
+    errors:
+      models:
+        category:
+          attributes:
+            name:
+              format: "は英数字とハイフンのみ使用できます"
+        metric:
+          attributes:
+            name:
+              format: "only allows alphanumeric characters and hyphens"
