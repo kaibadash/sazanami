@@ -12,8 +12,14 @@ export default function Home() {
         </p>
         <div className="flex justify-center space-x-4">
           <Link 
-            href="/about" 
+            href="/categories" 
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            カテゴリ一覧
+          </Link>
+          <Link 
+            href="/about" 
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
           >
             詳細へ
           </Link>
