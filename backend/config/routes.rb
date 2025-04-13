@@ -8,7 +8,10 @@ Rails.application.routes.draw do
   # API routes
   namespace :api do
     namespace :v1 do
-      get 'hello', to: 'hello#index'
+      get 'health_checks', to: 'health_checks#index'
+      
+      # コスト記録API
+      post 'categories/:category_name/metrics/:metric_name', to: 'metrics#create'
     end
   end
 
