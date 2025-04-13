@@ -8,6 +8,6 @@ Rails.application.routes.draw do
   get "health_checks", to: "health_checks#index"
 
   resources :categories, param: :name, only: [] do
-    resources :metrics, param: :metric_name, only: [:update]
+    resources :metrics, param: :metric_name, only: %i[index update]
   end
 end

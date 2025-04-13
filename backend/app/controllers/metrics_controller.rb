@@ -1,6 +1,28 @@
 # frozen_string_literal: true
 
 class MetricsController < ApplicationController
+  def index
+    category = Category.find_by!(name: params[:category_name].downcase)
+    metrics = category.metrics.includes(:metric_values).order(id: :desc)
+
+    render json: {
+      metrics: metrics.map do |metric|
+        {
+          name: metric.name,
+          label: metric.label,
+          unit: metric.unit,
+          prefix_unit: metric.prefix_unit,
+          values: metric.metric_values.map do |value|
+            {
+              value: value.value,
+              recorded_at: value.recorded_at
+            }
+          end
+        }
+      end
+    }
+  end
+
   def update
     category = Category.find_or_create_by!(name: params[:category_name].downcase) do |cat|
       cat.label = params[:category_name].downcase
