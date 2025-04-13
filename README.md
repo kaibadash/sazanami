@@ -16,7 +16,6 @@ docker compose up -d # postgresql
 cd backend
 bundle install
 bin/rails db:setup
-bin/rails db:migrate
 bin/rails server # use port 3001
 ```
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MetricValue < ApplicationRecord
   belongs_to :metric
 
