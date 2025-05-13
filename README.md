@@ -12,8 +12,8 @@ sazanami is a simple monitoring tool that records metrics and notifies you when 
 ### Backend
 
 ```bash
-docker compose up -d # postgresql
 cd backend
+docker compose up -d # postgresql port 5435
 bundle install
 bin/rails db:setup
 bin/rails server # use port 3001
@@ -25,5 +25,16 @@ bin/rails server # use port 3001
 cd frontend
 npm install
 npm run dev
-open http://localhost:3000
+open http://localhost:8888
+```
+
+### Example: Insert metrics
+
+```bash
+ curl -X PUT \
+  'http://localhost:8888/api/categories/AWS/metrics/Lambda' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "value": "$10"
+  }'
 ```
