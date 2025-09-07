@@ -12,7 +12,6 @@ class Metric < ApplicationRecord
   validates :name, uniqueness: { scope: :category_id }
 
   def self.create_with_value!(category, metric_name, value_str)
-    numeric_value = nil
     unit = value_str.gsub(/[0-9,\-\.]/, "").strip
 
     if unit.present?
