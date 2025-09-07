@@ -3,6 +3,7 @@ services:
     image: postgres
     container_name: sazanami_db
     environment:
+      - POSTGRES_USER=root
       - POSTGRES_PASSWORD=password
     ports:
       - "5435:5432"
