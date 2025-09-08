@@ -23,6 +23,9 @@ Style/StringLiteralsInInterpolation:
 Style/Documentation:
   Enabled: false
 
+Layout/LineLength:
+  Max: 200
+
 Metrics/AbcSize:
   Max: 50
 

@@ -4,22 +4,19 @@ class Metric < ApplicationRecord
   belongs_to :category
   has_many :metric_values, dependent: :destroy
 
-  before_save :set_default_label
-
+  before_save -> { self.label = name if label.blank? }
   validates :name, presence: true, format: { with: /\A[a-zA-Z0-9\-]+\z/ }
-  validates :unit, presence: true
   validates :prefix_unit, inclusion: { in: [true, false] }
   validates :name, uniqueness: { scope: :category_id }
 
   def self.create_with_value!(category, metric_name, value_str)
     unit = value_str.gsub(/[0-9,\-\.]/, "").strip
-
+    prefix_unit = false
     if unit.present?
       numeric_value = value_str.gsub(unit, "").strip.to_f
       prefix_unit = value_str.start_with?(unit)
     else
       numeric_value = value_str.to_f
-      prefix_unit = false
       unit = ""
     end
 
@@ -34,12 +31,23 @@ class Metric < ApplicationRecord
       recorded_at: Time.current
     )
 
+    handle_on_significant_change(metric)
+
     metric
   end
 
-  private
+  def self.handle_on_significant_change(metric)
+    recent_values = metric.metric_values.order(id: :desc).limit(10)
+    return unless recent_values.size >= 3
 
-  def set_default_label
-    self.label = name if label.blank?
+    z_score = Statistics.z_score(recent_values.first.value, recent_values.drop(1).map(&:value))
+    return unless z_score.abs > ENV.fetch("METRIC_Z_SCORE_THRESHOLD", 2.5).to_f
+
+    SlackNotifier::Client.notify_metric_change(
+      metric,
+      recent_values.second,
+      recent_values.first,
+      z_score
+    )
   end
 end
