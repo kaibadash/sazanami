@@ -8,7 +8,7 @@ module SlackNotifier
   class Client
     class << self
       def notify_metric_change(metric, old_value, new_value, z_score) # rubocop:disable Metrics/PerceivedComplexity
-        return if ENV.fetch("SLACK_WEBHOOK_URL", nil).blank?
+        return if Rails.application.credentials.dig(:slack, :webhook_url).blank?
 
         message = {
           text: ":rotating_light: Metric Anomaly Detection :rotating_light:",
@@ -63,7 +63,7 @@ module SlackNotifier
       private
 
       def send_to_slack(message)
-        uri = URI.parse(ENV.fetch("SLACK_WEBHOOK_URL", nil))
+        uri = URI.parse(Rails.application.credentials.dig(:slack, :webhook_url))
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = (uri.scheme == "https")
 
