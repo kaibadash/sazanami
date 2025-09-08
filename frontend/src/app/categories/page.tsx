@@ -43,7 +43,7 @@ export default function CategoriesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map((category) => (
             <Link 
-              key={category.id} 
+              key={`${category.id}-${category.name}`}
               href={`/categories/${category.name}`}
               className="block p-4 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow"
             >

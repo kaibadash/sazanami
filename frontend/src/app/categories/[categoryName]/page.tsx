@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { use, useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { getCategoryMetrics, Metric } from '@/lib/api';
 import * as d3 from 'd3';
@@ -8,9 +8,9 @@ import * as d3 from 'd3';
 export default function CategoryMetricsPage({ 
   params 
 }: { 
-  params: { categoryName: string } 
+  params: Promise<{ categoryName: string }>
 }) {
-  const { categoryName } = params;
+  const { categoryName } = use(params);
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
